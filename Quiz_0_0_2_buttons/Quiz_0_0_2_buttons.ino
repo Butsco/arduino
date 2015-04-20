@@ -55,7 +55,27 @@ void loop(void)
   
   checkButtons();
   
+  //analogWrite(RGB[2], 255);
+  
+  /*
   analogWrite(RGB[0], 255);
+  delay(500);
+  analogWrite(RGB[0], 0);
+  
+  analogWrite(RGB[1], 255);
+  delay(500);
+  analogWrite(RGB[1], 0);
+  
+  analogWrite(RGB[2], 255);
+  delay(500);
+  analogWrite(RGB[2], 0);
+  */
+
+  
+  
+  
+  
+  analogWrite(RGB[0], (state[0] | state[1])*255);
   analogWrite(RGB[1], (state[0] | state[2])*255);
   analogWrite(RGB[2], (state[0] | state[3])*255);
 
@@ -83,7 +103,7 @@ void checkButtons()
         state[i] = READING;
         
         if(state[i] == HIGH) {
-          sendStuff(i);
+          //sendStuff(i);
         }
       }
  
