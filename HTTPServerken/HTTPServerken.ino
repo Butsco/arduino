@@ -28,6 +28,13 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(24, PIN, NEO_GRB + NEO_KHZ800);  // 
 //   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
 //   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
+int red = 255;
+int green = 255;
+int blue = 255;
+
+
+
+
 void setup(void)
 {
   Serial.begin(115200);
@@ -72,9 +79,19 @@ void setup(void)
   strip.show(); // Initialize all pixels to 'off'
   Serial.println(F("stripping has begun"));
 }
+
+uint32_t c = strip.Color(255,255,255);
+uint16_t i;
+
 void loop(void)
 {
   //theaterChase(strip.Color( red, green, blue), 50); // white
+  
+  for(i=0; i<strip.numPixels(); i++) {
+    strip.setPixelColor(i, c);
+  }
+  strip.show();
+
   
 // GET A CLIENT
 //---------------
@@ -108,17 +125,78 @@ void loop(void)
         if (strcmp(path, "/red") == 0) {
           Serial.println(F("confirm"));
           client.fastrprintln(F("HTTP/1.1 200 OK"));// First send the success response code.       
-          client.fastrprintln(F("Content-Type: text/html"));// Then send a few headers to identify the type of data returned and that the connection will not be held open.
+          client.fastrprintln(F("Content-Type: text/plain"));// Then send a few headers to identify the type of data returned and that the connection will not be held open.
           client.fastrprintln(F("Connection: close"));
           client.fastrprintln(F("Server: Adafruit CC3000"));
           // Send an empty line to signal start of body.
           client.fastrprintln(F(""));
-          client.fastrprintln(F("<html> <body>"));
-          client.fastrprintln(F("Steven zat erneven"));
-          client.fastrprintln(F("</body> </html>"));
-          client.fastrprintln(F(""));
+          
+          red = 255;
+          green = 0;
+          blue = 0;
+          
+          c = strip.Color(255,0,0);
+          
+          
+
           //theaterChase(strip.Color(red,green,blue), 50);
-        } 
+        }
+       else if (strcmp(path, "/green") == 0) {
+          Serial.println(F("confirm"));
+          client.fastrprintln(F("HTTP/1.1 200 OK"));// First send the success response code.       
+          client.fastrprintln(F("Content-Type: text/plain"));// Then send a few headers to identify the type of data returned and that the connection will not be held open.
+          client.fastrprintln(F("Connection: close"));
+          client.fastrprintln(F("Server: Adafruit CC3000"));
+          // Send an empty line to signal start of body.
+          client.fastrprintln(F(""));
+          
+          red = 0;
+          green = 255;
+          blue = 0;
+          
+          c = strip.Color(0,255,0);
+          
+          
+
+          //theaterChase(strip.Color(red,green,blue), 50);
+        }  else if (strcmp(path, "/off") == 0) {
+          Serial.println(F("confirm"));
+          client.fastrprintln(F("HTTP/1.1 200 OK"));// First send the success response code.       
+          client.fastrprintln(F("Content-Type: text/plain"));// Then send a few headers to identify the type of data returned and that the connection will not be held open.
+          client.fastrprintln(F("Connection: close"));
+          client.fastrprintln(F("Server: Adafruit CC3000"));
+          // Send an empty line to signal start of body.
+          client.fastrprintln(F(""));
+          
+          red = 0;
+          green = 255;
+          blue = 0;
+          
+          c = strip.Color(0,0,0);
+          
+          
+
+          //theaterChase(strip.Color(red,green,blue), 50);
+        }  
+        else if (strcmp(path, "/on") == 0) {
+          Serial.println(F("confirm"));
+          client.fastrprintln(F("HTTP/1.1 200 OK"));// First send the success response code.       
+          client.fastrprintln(F("Content-Type: text/plain"));// Then send a few headers to identify the type of data returned and that the connection will not be held open.
+          client.fastrprintln(F("Connection: close"));
+          client.fastrprintln(F("Server: Adafruit CC3000"));
+          // Send an empty line to signal start of body.
+          client.fastrprintln(F(""));
+          
+          red = 0;
+          green = 255;
+          blue = 0;
+          
+          c = strip.Color(255,255,255);
+          
+          
+
+          //theaterChase(strip.Color(red,green,blue), 50);
+        }  
         //if (strcmp(path, "/green") == 0 {
         //  }
         else {     
@@ -160,72 +238,7 @@ void loop(void)
     client.close();
   }
 }
-void loop2(void)
-{
-  // Try to get a client which is connected.
-  Adafruit_CC3000_ClientRef client = httpServer.available();
-  if (client) {
-    Serial.println(F("Client connected."));
-    // Process this request until it completes or times out.
-    // Note that this is explicitly limited to handling one request at a time!
 
-    // Clear the incoming data buffer and point to the beginning of it.
-    bufindex = 0;
-    memset(&buffer, 0, sizeof(buffer));
-    
-    // Clear action and path strings.
-    memset(&action, 0, sizeof(action));
-    memset(&path,   0, sizeof(path));
-
-    // Set a timeout for reading all the incoming data.
-    unsigned long endtime = millis() + TIMEOUT_MS;
-    
-    // Read all the incoming data until it can be parsed or the timeout expires.
-    bool parsed = false;
-    while (!parsed && (millis() < endtime) && (bufindex < BUFFER_SIZE)) {
-      if (client.available()) {
-        buffer[bufindex++] = client.read();
-      }
-      parsed = parseRequest(buffer, bufindex, action, path);
-    }
-
-    // Handle the request if it was parsed.
-    if (parsed) {
-      Serial.println(F("Processing request"));
-      Serial.print(F("Action: ")); Serial.println(action);
-      Serial.print(F("Path: ")); Serial.println(path);
-      // Check the action to see if it was a GET request.
-      if (strcmp(action, "GET") == 0) {
-        // Respond with the path that was accessed.
-        // First send the success response code.
-        client.fastrprintln(F("HTTP/1.1 200 OK"));
-        // Then send a few headers to identify the type of data returned and that
-        // the connection will not be held open.
-        client.fastrprintln(F("Content-Type: text/plain"));
-        client.fastrprintln(F("Connection: close"));
-        client.fastrprintln(F("Server: Adafruit CC3000"));
-        // Send an empty line to signal start of body.
-        client.fastrprintln(F(""));
-        // Now send the response data.
-        client.fastrprintln(F("Hello world!"));
-        client.fastrprint(F("You accessed path: ")); client.fastrprintln(path);
-      }
-      else {
-        // Unsupported action, respond with an HTTP 405 method not allowed error.
-        client.fastrprintln(F("HTTP/1.1 405 Method Not Allowed"));
-        client.fastrprintln(F(""));
-      }
-    }
-
-    // Wait a short period to make sure the response had time to send before
-    // the connection is closed (the CC3000 sends data asyncronously).
-    delay(100);
-
-    // Close the connection when done.
-    Serial.println(F("Client disconnected"));
-    client.close();
-  }
-}
 
 // Return true if the buffer contains an HTTP request.  Also returns the request
 // path and action strings if the request was parsed.  This does not attempt to
@@ -279,5 +292,91 @@ bool displayConnectionDetails(void)
     Serial.print(F("\nDNSserv: ")); cc3000.printIPdotsRev(dnsserv);
     Serial.println();
     return true;
+  }
+}
+//------------------------------
+// NEOPIXEL SHIT
+//------------------------------
+// Fill the dots one after the other with a color
+void colorWipe(uint32_t c, uint8_t wait) {
+  for(uint16_t i=0; i<strip.numPixels(); i++) {
+      strip.setPixelColor(i, c);
+      strip.show();
+      delay(wait);
+  }
+}
+
+void rainbow(uint8_t wait) {
+  uint16_t i, j;
+
+  for(j=0; j<256; j++) {
+    for(i=0; i<strip.numPixels(); i++) {
+      strip.setPixelColor(i, Wheel((i+j) & 255));
+    }
+    strip.show();
+    delay(wait);
+  }
+}
+
+// Slightly different, this makes the rainbow equally distributed throughout
+void rainbowCycle(uint8_t wait) {
+  uint16_t i, j;
+
+  for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
+    for(i=0; i< strip.numPixels(); i++) {
+      strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
+    }
+    strip.show();
+    delay(wait);
+  }
+}
+
+//Theatre-style crawling lights.
+void theaterChase(uint32_t c, uint8_t wait) {
+  for (int j=0; j<10; j++) {  //do 10 cycles of chasing
+    for (int q=0; q < 3; q++) {
+      for (int i=0; i < strip.numPixels(); i=i+3) {
+        strip.setPixelColor(i+q, c);    //turn every third pixel on
+      }
+      strip.show();
+     
+      delay(wait);
+     
+      for (int i=0; i < strip.numPixels(); i=i+3) {
+        strip.setPixelColor(i+q, 0);        //turn every third pixel off
+      }
+    }
+  }
+}
+
+//Theatre-style crawling lights with rainbow effect
+void theaterChaseRainbow(uint8_t wait) {
+  for (int j=0; j < 256; j++) {     // cycle all 256 colors in the wheel
+    for (int q=0; q < 3; q++) {
+        for (int i=0; i < strip.numPixels(); i=i+3) {
+          strip.setPixelColor(i+q, Wheel( (i+j) % 255));    //turn every third pixel on
+        }
+        strip.show();
+       
+        delay(wait);
+       
+        for (int i=0; i < strip.numPixels(); i=i+3) {
+          strip.setPixelColor(i+q, 0);        //turn every third pixel off
+        }
+    }
+  }
+}
+
+// Input a value 0 to 255 to get a color value.
+// The colours are a transition r - g - b - back to r.
+uint32_t Wheel(byte WheelPos) {
+  if(WheelPos < 85) {
+   return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+  } else if(WheelPos < 170) {
+   WheelPos -= 85;
+   return strip.Color(255 - WheelPos * 3, 0, WheelPos * 3);
+  } else {
+   WheelPos -= 170;
+   return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
   }
 }
