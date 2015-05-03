@@ -6,8 +6,8 @@
 #define ADAFRUIT_CC3000_VBAT  5
 #define ADAFRUIT_CC3000_CS    10 // Use hardware SPI for the remaining pins // On an UNO, SCK = 13, MISO = 12, and MOSI = 11
 Adafruit_CC3000 cc3000 = Adafruit_CC3000(ADAFRUIT_CC3000_CS, ADAFRUIT_CC3000_IRQ, ADAFRUIT_CC3000_VBAT, SPI_CLOCK_DIVIDER); // you can change this clock speed
-#define WLAN_SSID       "Vikingsigns"   // cannot be longer than 32 characters!
-#define WLAN_PASS       "Vlaanderen"
+#define WLAN_SSID       "RKM"   // cannot be longer than 32 characters!
+#define WLAN_PASS       "routerken123"
 #define WLAN_SECURITY   WLAN_SEC_WPA2 // Security can be WLAN_SEC_UNSEC, WLAN_SEC_WEP, WLAN_SEC_WPA or WLAN_SEC_WPA2
 #define LISTEN_PORT           80      // What TCP port to listen on for connections.// The HTTP protocol uses port 80 by default.
 #define MAX_ACTION            10      // Maximum length of the HTTP action that can be parsed.
@@ -28,19 +28,12 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(24, PIN, NEO_GRB + NEO_KHZ800);  // 
 //   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
 //   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
-int red = 255;
-int green = 255;
-int blue = 255;
-
-
-
 
 void setup(void)
 {
   Serial.begin(115200);
   Serial.println(F("Hello, CC3000!\n")); 
-
-  
+ 
   // Initialise the module
   Serial.println(F("\nInitializing..."));
   if (!cc3000.begin())
@@ -75,13 +68,15 @@ void setup(void)
 
 //START NEOPIXELS
 //---------------
-  strip.begin();
-  strip.show(); // Initialize all pixels to 'off'
+  //strip.begin();
+  //strip.show(); // Initialize all pixels to 'off'
   Serial.println(F("stripping has begun"));
 }
 
 uint32_t c = strip.Color(255,255,255);
 uint16_t i;
+
+Adafruit_CC3000_ClientRef client = 0;
 
 void loop(void)
 {
@@ -95,7 +90,7 @@ void loop(void)
   
 // GET A CLIENT
 //---------------
-  Adafruit_CC3000_ClientRef client = httpServer.available(); // Try to get a client which is connected.
+  client = httpServer.available(); // Try to get a client which is connected.
   if (client) {
     Serial.println(F("Client connected.")); 
     bufindex = 0; // Clear the incoming data buffer and point to the beginning of it.
@@ -123,83 +118,48 @@ void loop(void)
       
       if (strcmp(action, "GET") == 0) { // Check the action to see if it was a GET request. strcmp = stringcompare
         if (strcmp(path, "/red") == 0) {
-          Serial.println(F("confirm"));
-          client.fastrprintln(F("HTTP/1.1 200 OK"));// First send the success response code.       
-          client.fastrprintln(F("Content-Type: text/plain"));// Then send a few headers to identify the type of data returned and that the connection will not be held open.
-          client.fastrprintln(F("Connection: close"));
-          client.fastrprintln(F("Server: Adafruit CC3000"));
-          // Send an empty line to signal start of body.
-          client.fastrprintln(F(""));
-          
-          red = 255;
-          green = 0;
-          blue = 0;
-          
+          Serial.println(F("RED"));
+          ok200();          
           c = strip.Color(255,0,0);
-          
-          
 
-          //theaterChase(strip.Color(red,green,blue), 50);
         }
        else if (strcmp(path, "/green") == 0) {
-          Serial.println(F("confirm"));
-          client.fastrprintln(F("HTTP/1.1 200 OK"));// First send the success response code.       
-          client.fastrprintln(F("Content-Type: text/plain"));// Then send a few headers to identify the type of data returned and that the connection will not be held open.
-          client.fastrprintln(F("Connection: close"));
-          client.fastrprintln(F("Server: Adafruit CC3000"));
-          // Send an empty line to signal start of body.
-          client.fastrprintln(F(""));
-          
-          red = 0;
-          green = 255;
-          blue = 0;
-          
+          Serial.println(F("GREEN"));
+          ok200();          
           c = strip.Color(0,255,0);
-          
-          
-
-          //theaterChase(strip.Color(red,green,blue), 50);
+ 
+        } else if (strcmp(path, "/blue") == 0) {
+          Serial.println(F("BLUE"));
+          ok200();          
+          c = strip.Color(0,255,0);
+ 
         }  else if (strcmp(path, "/off") == 0) {
-          Serial.println(F("confirm"));
-          client.fastrprintln(F("HTTP/1.1 200 OK"));// First send the success response code.       
-          client.fastrprintln(F("Content-Type: text/plain"));// Then send a few headers to identify the type of data returned and that the connection will not be held open.
-          client.fastrprintln(F("Connection: close"));
-          client.fastrprintln(F("Server: Adafruit CC3000"));
-          // Send an empty line to signal start of body.
-          client.fastrprintln(F(""));
+          Serial.println(F("OFF"));
+          ok200();          
+          c = strip.Color(0,0,0);  
           
-          red = 0;
-          green = 255;
-          blue = 0;
-          
-          c = strip.Color(0,0,0);
-          
-          
-
-          //theaterChase(strip.Color(red,green,blue), 50);
         }  
         else if (strcmp(path, "/on") == 0) {
-          Serial.println(F("confirm"));
-          client.fastrprintln(F("HTTP/1.1 200 OK"));// First send the success response code.       
-          client.fastrprintln(F("Content-Type: text/plain"));// Then send a few headers to identify the type of data returned and that the connection will not be held open.
-          client.fastrprintln(F("Connection: close"));
-          client.fastrprintln(F("Server: Adafruit CC3000"));
-          // Send an empty line to signal start of body.
-          client.fastrprintln(F(""));
-          
-          red = 0;
-          green = 255;
-          blue = 0;
-          
+          Serial.println(F("ON"));
+          ok200();          
           c = strip.Color(255,255,255);
-          
-          
 
-          //theaterChase(strip.Color(red,green,blue), 50);
         }  
-        //if (strcmp(path, "/green") == 0 {
-        //  }
+        else if (strstr(path, "/color/") != 0) {
+          
+          char ccc[6];
+          strncpy(ccc, &path[7], 6);
+          char* pos = ccc;          
+          c = strtol(pos, &pos, 16);
+          
+          ok200();
+          
+          Serial.println(F("COLOR"));
+          Serial.println(c, HEX);     
+          
+        }
         else {     
+          
           client.fastrprintln(F("HTTP/1.1 200 OK"));// First send the success response code.       
           client.fastrprintln(F("Content-Type: text/html"));// Then send a few headers to identify the type of data returned and that the connection will not be held open.
           client.fastrprintln(F("Connection: close"));
@@ -208,17 +168,17 @@ void loop(void)
           client.fastrprintln(F(""));
           client.fastrprintln(F("<html> <head>"));
           client.fastrprintln(F("<script>"));
-          client.fastrprintln(F("x = new XMLHttpRequest();"));
-          client.fastrprintln(F("function red() {x.open('GET','/red'); x.send(); console.log(x.status);}"));
+          client.fastrprintln(F("function red() {x = new XMLHttpRequest(); x.open('GET','/red'); x.send(); console.log(x.status);}"));
+          client.fastrprintln(F("function color() {x = new XMLHttpRequest(); x.open('GET','/color/F0F0F0'); x.send(); console.log(x.status);}"));
           client.fastrprintln(F("</script> </head> <body>"));
           
           client.fastrprintln(F("<h1>Hello world!</h1>"));// Now send the response data.
           client.fastrprintln(F("<h1 onclick='red()'>RED</h1>"));
+          client.fastrprintln(F("<h1 onclick='color()'>Color</h1>"));
           client.fastrprint(F("You accessed path: ")); client.fastrprintln(path);
           client.fastrprintln(F("</body> </html>"));
           client.fastrprintln(F(""));
 
-          
         }
         
       }
@@ -273,6 +233,14 @@ void parseFirstLine(char* line, char* action, char* path) {
     strncpy(path, linepath, MAX_PATH);
 }
 
+void ok200() {
+  client.fastrprintln(F("HTTP/1.1 200 OK"));// First send the success response code.       
+  client.fastrprintln(F("Content-Type: text/plain"));// Then send a few headers to identify the type of data returned and that the connection will not be held open.
+  client.fastrprintln(F("Connection: close"));
+  client.fastrprintln(F("Server: Adafruit CC3000"));
+  client.fastrprintln(F("")); 
+}
+
 // Tries to read the IP address and other connection details
 bool displayConnectionDetails(void)
 {
@@ -294,6 +262,10 @@ bool displayConnectionDetails(void)
     return true;
   }
 }
+
+
+
+
 //------------------------------
 // NEOPIXEL SHIT
 //------------------------------

@@ -12,8 +12,8 @@
 #define ADAFRUIT_CC3000_VBAT  5 // These can be any two pins
 #define ADAFRUIT_CC3000_CS    10 // On an UNO, SCK = 13, MISO = 12, and MOSI = 11 These can be any two pins
 Adafruit_CC3000 cc3000 = Adafruit_CC3000(ADAFRUIT_CC3000_CS, ADAFRUIT_CC3000_IRQ, ADAFRUIT_CC3000_VBAT, SPI_CLOCK_DIVIDER); // you can change this clock speed
-#define WLAN_SSID       "VikingCo"   // cannot be longer than 32 characters!
-#define WLAN_PASS       "nsrwerk???"
+#define WLAN_SSID       "RKM"   // cannot be longer than 32 characters!
+#define WLAN_PASS       "routerken123"
 #define WLAN_SECURITY   WLAN_SEC_WPA2 // Security can be WLAN_SEC_UNSEC, WLAN_SEC_WEP, WLAN_SEC_WPA or WLAN_SEC_WPA2
 #define LISTEN_PORT           80      // What TCP port to listen on for connections.  The HTTP protocol uses port 80 by default.
 #define MAX_ACTION            10      // Maximum length of the HTTP action that can be parsed.
@@ -76,13 +76,13 @@ void setup(void)
 
 //START NEOPIXELS
 //---------------
-  strip.begin();
-  strip.show(); // Initialize all pixels to 'off'
+  //strip.begin();
+  //strip.show(); // Initialize all pixels to 'off'
 }
 
 void loop(void)
 {
-  theaterChase(strip.Color( red, green, blue), 50); // white
+  //theaterChase(strip.Color( red, green, blue), 50); // white
   
 // GET A CLIENT
 //---------------
