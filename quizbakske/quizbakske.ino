@@ -90,7 +90,7 @@ void setup(void)
 
 void loop(void)
 {
-  
+  delay(100;)
   checkButtons();
   
   long now = millis();
