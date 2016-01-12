@@ -58,19 +58,6 @@ RF24 radio(9,10);
 // Radio pipe addresses for the 2 nodes to communicate.
 const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 
-
-
-
-struct packet
-{
-uint16_t id: 6;
-uint16_t payload: 10;       // range: 0-1, 0=AM 1=PM
-};
-
-
-
-
-
 void setup(void)
 {
   pinMode(RGB[0], OUTPUT);
@@ -83,16 +70,6 @@ void setup(void)
   
   Serial.begin(57600);
   Serial.println("Hoppa");
-  
-  packet x;
-  x.id = 5;
-  x.payload = 425;
-  
-  Serial.println(x.id, DEC);
-  Serial.println(x.payload, DEC);
-  Serial.println("---");
-  
-  
 
   
 
@@ -113,7 +90,7 @@ void setup(void)
 
 void loop(void)
 {
-  
+  delay(100);
   checkButtons();
   
   long now = millis();

@@ -1,10 +1,11 @@
 #include "LPD8806.h"
 #include "SPI.h"
 
-int dataPin = 13;
-int clockPin = 12;
+int dataPin = A3;
+int clockPin = A2;
+int lights = 4;
 
-LPD8806 strip = LPD8806(14, dataPin, clockPin);
+LPD8806 strip = LPD8806(lights, dataPin, clockPin);
 
 void setup() {
   // Start up the LED strip
@@ -70,7 +71,7 @@ void loop() {
     strip.setPixelColor(i, 0);
   }
   */
-        
+     /*   
   while (Serial.available()) {
     // get the new byte:
     char inChar = (char)Serial.read(); 
@@ -86,7 +87,7 @@ void loop() {
   if(up != upNew) {
     up = upNew;
   
-    if(up) {
+    if(up) {install 
       //Serial.println("up");
     } else {
       //Serial.println("down");
@@ -98,7 +99,7 @@ void loop() {
   } else {
     colorChase(strip.Color(127,0,0), 20);
   }
-  
+  */
   
 }
 
