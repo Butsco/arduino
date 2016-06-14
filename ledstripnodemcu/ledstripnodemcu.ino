@@ -53,7 +53,7 @@ void handleRoot() {
   message += "; B=";
   message += b;
   message += ";";
-  message += "function color(r,g,b) {x = new XMLHttpRequest(); x.open('GET', '/api?r='+r+'&g='+g+'&b='+b); x.send(); R=r; G=g; B=b;}";
+  message += "function color(r,g,b) {r = r<0?0:r>127?127:r; g = g<0?0:g>127?127:g; b = b<0?0:b>127?127:b;  x = new XMLHttpRequest(); x.open('GET', '/api?r='+r+'&g='+g+'&b='+b); x.send(); R=r; G=g; B=b;}";
   message += "</script></head><body style='background: rgb(";
   message += r;
   message += ", ";
